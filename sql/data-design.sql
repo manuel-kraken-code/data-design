@@ -1,3 +1,6 @@
+ALTER DATABASE mescobar14 CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+
 DROP TABLE IF EXISTS `like`;
 DROP TABLE IF EXISTS comment;
 DROP TABLE IF EXISTS persona;
@@ -14,11 +17,11 @@ PRIMARY KEY(personaId)
 CREATE TABLE comment (
 
 commentId BINARY(16) NOT NULL,
-commentProfileId BINARY(16) NOT NULL,
+commentPersonaId BINARY(16) NOT NULL,
 commentContent VARCHAR(140) NOT NULL,
 commentDate DATETIME(6) NOT NULL,
-INDEX(commentProfileId),
-FOREIGN KEY(commentProfileId) REFERENCES persona(personaId),
+INDEX(commentPersonaId),
+FOREIGN KEY(commentPersonaId) REFERENCES persona(personaId),
 PRIMARY KEY(commentId)
 );
 
