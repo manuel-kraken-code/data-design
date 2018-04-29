@@ -51,8 +51,8 @@ class Persona {
 	 *
 	 * @param string|Uuid $newPersonaId id of this Persona
 	 * @param string $newPersonaEmail of the Persona that sent this Email
-	 * @param string $newPersonaPhone string containing actual tweet data
-	 * @param string $newPersonaType string containing actual tweet data
+	 * @param string $newPersonaPhone string containing actual persona data
+	 * @param string $newPersonaType string containing actual persona data
 	 * @throws \InvalidArgumentException if data types are not valid
 	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
 	 * @throws \TypeError if data types violate type hints
@@ -214,7 +214,7 @@ class Persona {
 
 
 	/**
-	 * -- inserts this Tweet into mySQL
+	 * -- inserts this Persona into mySQL
 	 *
 	 * -- @param \PDO $pdo PDO connection object
 	 * -- @throws \PDOException when mySQL related errors occur
