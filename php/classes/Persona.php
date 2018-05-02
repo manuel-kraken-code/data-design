@@ -59,22 +59,18 @@ class Persona {
 	 * @throws \Exception if some other exception occurs
 	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
 	 **/
-	public function __construct($newPersonaId,string $newPersonaEmail, string $newPersonaPhone, $newPersonaType) {
+	public function __construct($newPersonaId, string $newPersonaEmail, string $newPersonaPhone, $newPersonaType) {
 		try {
 			$this->setPersonaId($newPersonaId);
 			$this->setPersonaEmail($newPersonaEmail);
 			$this->setPersonaPhone($newPersonaPhone);
 			$this->setPersonaType($newPersonaType);
-		}
-			//determine what exception type was thrown
+		} //determine what exception type was thrown
 		catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
 			$exceptionType = get_class($exception);
 			throw(new $exceptionType($exception->getMessage(), 0, $exception));
 		}
 	}
-
-
-
 
 
 	/**
@@ -110,8 +106,6 @@ class Persona {
 		// convert and store the profile id
 		$this->personaId = $uuid;
 	}
-
-
 
 
 	/**
@@ -154,8 +148,6 @@ class Persona {
 	}
 
 
-
-
 	/**
 	 * accessor method for personaEmail
 	 * @return string value for personaEmail
@@ -193,7 +185,6 @@ class Persona {
 		// store new profileEmail
 		$this->personaEmail = $newPersonaEmail;
 	}
-
 
 
 	/**
@@ -260,4 +251,89 @@ class Persona {
 		$fields["personaId"] = $this->personaId->toString();
 		return ($fields);
 	}
+
+
+	/**
+	 * gets the Persona by PersonaId
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param Uuid| string $personaId persona id to search for
+	 * @return Persona|null Persona found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when a variable are not the correct data type
+	 **/
+	public static function getPersonaByPersonaId(\PDO $pdo, $personaId): ?Persona {
+		// sanitize the personaId before searching
+		try {
+			$personaId = self::validateUuid($personaId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+
+		// create query template
+		$query = "SELECT personaId, personaEmail, personaPhone, personaType";
+		$statement = $pdo->prepare($query);
+
+		// bind the persona id to the place holder in the template
+		$parameters = ["personaId" => $personaId->getBytes()];
+		$statement->execute($parameters);
+
+		// grab the persona from mySQL
+		try {
+			$persona = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$persona = new Persona($row["personaId"], $row["personaEmail"], $row["personaPhone"], $row["personaType"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($persona);
+	}
+
+
+
+	/**
+	 * gets the Persona by PersonaType
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param Uuid| string $personaType persona id to search for
+	 * @return Persona|null Persona found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 * @throws \TypeError when a variable are not the correct data type
+	 **/
+	public static function getPersonaByPersonaType(\PDO $pdo, $personaType): ?Persona {
+		// sanitize the personaId before searching
+		try {
+			$personaType = self::validateUuid($personaType);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+
+		// create query template
+		$query = "SELECT personaId, personaEmail, personaPhone, personaType";
+		$statement = $pdo->prepare($query);
+
+		// bind the persona type to the place holder in the template
+		$parameters = ["personaType" => $personaType->getBytes()];
+		$statement->execute($parameters);
+
+		// grab the persona from mySQL
+		try {
+			$persona = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$persona = new Persona($row["personaId"], $row["personaEmail"], $row["personaPhone"], $row["personaType"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($persona);
+	}
 }
+
+
